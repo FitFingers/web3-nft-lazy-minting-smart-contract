@@ -1,9 +1,4 @@
-const Creature = artifacts.require("./Creature.sol");
-
-const DEPLOY_ALL = process.env.DEPLOY_ALL;
-const DEPLOY_CREATURES_SALE = process.env.DEPLOY_CREATURES_SALE || DEPLOY_ALL;
-const DEPLOY_CREATURES =
-  process.env.DEPLOY_CREATURES || DEPLOY_CREATURES_SALE || DEPLOY_ALL;
+const SatoshiShroom = artifacts.require("./SatoshiShroom.sol");
 
 module.exports = async (deployer, network, addresses) => {
   let proxyRegistryAddress = "";
@@ -13,7 +8,5 @@ module.exports = async (deployer, network, addresses) => {
     proxyRegistryAddress = "0xa5409ec958c83c3f309868babaca7c86dcb077c1";
   }
 
-  if (DEPLOY_CREATURES) {
-    await deployer.deploy(Creature, proxyRegistryAddress, { gas: 5000000 });
-  }
+  await deployer.deploy(SatoshiShroom, proxyRegistryAddress, { gas: 5000000 });
 };
