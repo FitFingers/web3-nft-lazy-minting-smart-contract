@@ -1,9 +1,9 @@
 const Creature = artifacts.require("./Creature.sol");
-const CreatureFactory = artifacts.require("./CreatureFactory.sol");
 
 const DEPLOY_ALL = process.env.DEPLOY_ALL;
 const DEPLOY_CREATURES_SALE = process.env.DEPLOY_CREATURES_SALE || DEPLOY_ALL;
-const DEPLOY_CREATURES = process.env.DEPLOY_CREATURES || DEPLOY_CREATURES_SALE || DEPLOY_ALL;
+const DEPLOY_CREATURES =
+  process.env.DEPLOY_CREATURES || DEPLOY_CREATURES_SALE || DEPLOY_ALL;
 
 module.exports = async (deployer, network, addresses) => {
   let proxyRegistryAddress = "";
@@ -15,16 +15,5 @@ module.exports = async (deployer, network, addresses) => {
 
   if (DEPLOY_CREATURES) {
     await deployer.deploy(Creature, proxyRegistryAddress, { gas: 5000000 });
-  }
-
-  if (DEPLOY_CREATURES_SALE) {
-    await deployer.deploy(
-      CreatureFactory,
-      proxyRegistryAddress,
-      Creature.address,
-      { gas: 7000000 }
-    );
-    const creature = await Creature.deployed();
-    await creature.transferOwnership(CreatureFactory.address);
   }
 };
