@@ -24,12 +24,12 @@ const mainnetNodeUrl = isInfura
 
 module.exports = {
   networks: {
-    development: {
-      host: "localhost",
-      port: 7545,
-      gas: 5000000,
-      network_id: "*", // Match any network id
-    },
+    // development: {
+    //   host: "localhost",
+    //   port: 7545,
+    //   gas: 5000000,
+    //   network_id: "*", // Match any network id
+    // },
     rinkeby: {
       provider: function () {
         return new HDWalletProvider(MNEMONIC, rinkebyNodeUrl);
@@ -37,14 +37,14 @@ module.exports = {
       gas: 5000000,
       network_id: 4,
     },
-    live: {
-      network_id: 1,
-      provider: function () {
-        return new HDWalletProvider(MNEMONIC, mainnetNodeUrl);
-      },
-      gas: 5000000,
-      gasPrice: 5000000000,
-    },
+    // live: {
+    //   network_id: 1,
+    //   provider: function () {
+    //     return new HDWalletProvider(MNEMONIC, mainnetNodeUrl);
+    //   },
+    //   gas: 5000000,
+    //   gasPrice: 5000000000,
+    // },
   },
   mocha: {
     reporter: "eth-gas-reporter",
