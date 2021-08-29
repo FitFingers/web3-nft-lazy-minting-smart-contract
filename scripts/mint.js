@@ -1,13 +1,16 @@
 const HDWalletProvider = require("truffle-hdwallet-provider");
 const web3 = require("web3");
-const SATOSHI_SHROOM_ABI = require("./satoshi-shroom-abi").default;
+const SATOSHI_SHROOM_ABI = require("./satoshi-shroom-abi");
+const functions = require("./functions");
+
 const MNEMONIC = process.env.MNEMONIC;
 const NODE_API_KEY = process.env.INFURA_KEY || process.env.ALCHEMY_KEY;
 const isInfura = !!process.env.INFURA_KEY;
-const SHROOM_CONTRACT_ADDRESS = process.env.SHROOM_CONTRACT_ADDRESS;
+const NEW_CONTRACT = process.env.NEW_CONTRACT;
+// const SHROOM_CONTRACT_ADDRESS = process.env.SHROOM_CONTRACT_ADDRESS;
 const OWNER_ADDRESS = process.env.OWNER_ADDRESS;
 const NETWORK = process.env.NETWORK;
-const NUM_CREATURES = 1;
+const NUM_MUSHROOMS = 1;
 
 if (!MNEMONIC || !NODE_API_KEY || !OWNER_ADDRESS || !NETWORK) {
   console.error(
@@ -45,58 +48,65 @@ async function main() {
     );
     const web3Instance = new web3(provider);
 
-    if (SHROOM_CONTRACT_ADDRESS) {
+    if (NEW_CONTRACT) {
       const nftContract = new web3Instance.eth.Contract(
-        SATOSHI_SHROOM_ABI,
-        SHROOM_CONTRACT_ADDRESS,
+        SATOSHI_SHROOM_ABI.newOne,
+        NEW_CONTRACT,
         { gasLimit: "1000000" }
       );
 
-      // MAX PURCHASE
-      console.log("Estimating gas for maxPurchase...");
-      const maxPurchaseFn = await nftContract.methods.maxMushroomPurchase();
-      const maxPurchaseGasCost = await maxPurchaseFn.estimateGas();
-      console.log(
-        `Gas estimate for maxPurchase: ${maxPurchaseGasCost} (${
-          maxPurchaseGasCost / Math.pow(10, 9)
-        })`
-      );
-      const maxPurchase = await maxPurchaseFn.call();
-      console.log("maxMushroomPurchase:", maxPurchase);
+      // // ALL AVAILABLE METHODS
+      // const methods = await nftContract.methods;
+      // console.log("NFT METHODS", methods);
 
-      // MUSHROOM PRICE
-      console.log("Estimating gas for mushroomPrice...");
-      const mushroomPriceFn = await nftContract.methods.mushroomPrice();
-      const mushroomPriceGasCost = await mushroomPriceFn.estimateGas();
-      console.log(
-        `Gas estimate for mushroomPrice: ${mushroomPriceGasCost} (${
-          mushroomPriceGasCost / Math.pow(10, 9)
-        })`
+      const mushroomPrice = await functions.runFunction(
+        "mushroomPrice",
+        nftContract,
+        { estimateGas: false }
       );
-      const mushroomPrice = await mushroomPriceFn.call();
-      console.log("mushroomPrice:", mushroomPrice);
 
-      // MINTING
-      console.log("Estimating gas for minting...");
-      const gasCost = await nftContract.methods
-        .mintSatoshiShroom(1)
-        .estimateGas({
-          from: OWNER_ADDRESS,
-          value: mushroomPrice,
-        });
-      // const gasCost = await mintFn.estimateGas({
+      // const maxMushroomPurchase = await functions.runFunction(
+      //   "maxMushroomPurchase",
+      //   nftContract,
+      //   { estimateGas: false }
+      // );
+
+      // PRINT BASE URI
+      // await functions.runFunction("getBaseURI", nftContract, {
+      //   estimateGas: false,
+      // });
+
+      // UPDATE BASE URI
+      // await functions.runFunction("owner", nftContract)
+
+      // // MINT NFT
+      // // const mintFunctionRef = await functions.runFunction(
+      // //   "mintSatoshiShroom",
+      // //   nftContract,
+      // //   { callFunction: false },
+      // //   1
+      // // );
+      // // const mintFn = mintFunctionRef(1);
+      // // const result = await mintFn(1).send({
+      // const result = await nftContract.methods.mintSatoshiShroom(1).send({
       //   from: OWNER_ADDRESS,
       //   value: mushroomPrice,
       // });
-      console.log(
-        `Gas estimate for minting: ${gasCost} (${gasCost / Math.pow(10, 9)})`
-      );
+      // console.log(`MINT TX / RESULT: ${result.transactionHash} / `, result);
 
-      // Creatures issued directly to the owner.
-      // for (var i = 0; i < NUM_CREATURES; i++) {
-      //   const result = await nftContract.methods.mintSatoshiShroom().call(1);
-      //   // .send({ from: OWNER_ADDRESS });
-      //   console.log("Minted creature. Transaction: " + result.transactionHash);
+      // // Mushrooms issued directly to the owner.
+      // for (var i = 0; i < NUM_MUSHROOMS; i++) {
+      const result = await nftContract.methods
+        .mintSatoshiShroom(1)
+        // .call(1)
+        .send({
+          from: OWNER_ADDRESS,
+          value: mushroomPrice,
+        })
+        .on("transactionHash", function (hash) {
+          console.log("transactionHash", hash);
+        });
+      console.log("Minted creature. Transaction: " + result.transactionHash);
       // }
 
       console.log("Minting complete.");

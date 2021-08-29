@@ -23,6 +23,7 @@ contract ProxyRegistry {
  */
 abstract contract ERC721Tradable is ContextMixin, ERC721Enumerable, NativeMetaTransaction, Ownable {
     using SafeMath for uint256;
+    string baseURI = "no-base-uri-set";
 
     address proxyRegistryAddress;
     uint256 private _currentTokenId = 0;
@@ -61,10 +62,18 @@ abstract contract ERC721Tradable is ContextMixin, ERC721Enumerable, NativeMetaTr
         _currentTokenId++;
     }
 
-    function baseTokenURI() virtual public pure returns (string memory);
+    // function baseTokenURI() virtual public pure returns (string memory);
 
-    function tokenURI(uint256 _tokenId) override public pure returns (string memory) {
-        return string(abi.encodePacked(baseTokenURI(), Strings.toString(_tokenId)));
+    function _baseURI() internal override view virtual returns (string memory) {
+        return baseURI; // customBaseURI;
+    }
+
+    function _setBaseURI(string memory baseURI_) internal virtual {
+        baseURI = baseURI_;
+    }
+
+    function tokenURI(uint256 _tokenId) override public view returns (string memory) {
+        return string(abi.encodePacked(_baseURI(), Strings.toString(_tokenId)));
     }
 
     /**

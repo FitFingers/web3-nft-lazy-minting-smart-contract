@@ -39,13 +39,15 @@ contract SatoshiShroom is ERC721Tradable {
         payable(msg.sender).transfer(balance);
     }
 
-    // // Once all Shrooms were bought, set the baseURI to IPFS to populate metadata / display images
-    // function setBaseURI(string memory baseURI) public onlyOwner {
-    //     // _baseURI(baseURI); // from ERC721
-    //     _baseURI = baseURI;
-    //     // _baseURI("test");
-    //     // => (baseURI); // from ERC721
-    // }
+    // Once all Shrooms were bought, set the baseURI to IPFS to populate metadata / display images
+    function setBaseURI(string memory baseURI) public onlyOwner {
+        _setBaseURI(baseURI); // bbco
+    }
+
+    // Fetch the current baseURI
+    function getBaseURI() public view onlyOwner returns (string memory) {
+        return _baseURI();
+    }
 
     function mintSatoshiShroom(uint256 tokensToMint) public payable {
         require(
@@ -67,13 +69,5 @@ contract SatoshiShroom is ERC721Tradable {
                 _safeMint(msg.sender, mintIndex);
             }
         }
-    }
-
-    function baseTokenURI() public pure override returns (string memory) {
-        return "https://creatures-api.opensea.io/api/creature/";
-    }
-
-    function contractURI() public pure returns (string memory) {
-        return "https://creatures-api.opensea.io/contract/opensea-creatures";
     }
 }
