@@ -1,14 +1,16 @@
 const HDWalletProvider = require("truffle-hdwallet-provider");
 const web3 = require("web3");
-const SATOSHI_SHROOM_ABI = require("./satoshi-shroom-abi");
+const ABI = require("./satoshi-shroom-abi");
 const functions = require("./functions");
 
 const MNEMONIC = process.env.MNEMONIC;
 const NODE_API_KEY = process.env.INFURA_KEY || process.env.ALCHEMY_KEY;
 const isInfura = !!process.env.INFURA_KEY;
-const NEWEST_CONTRACT = process.env.NEWEST_CONTRACT;
+const ORIG_CONTRACT_ADDRESS = process.env.ORIG_CONTRACT_ADDRESS;
 const OWNER_ADDRESS = process.env.OWNER_ADDRESS;
 const NETWORK = process.env.NETWORK;
+const IPFS_HASH = process.env.IPFS_HASH;
+
 const NUM_MUSHROOMS = 3;
 
 if (!MNEMONIC || !NODE_API_KEY || !OWNER_ADDRESS || !NETWORK) {
@@ -30,10 +32,10 @@ async function main() {
     );
     const web3Instance = new web3(provider);
 
-    if (NEWEST_CONTRACT) {
+    if (ORIG_CONTRACT_ADDRESS) {
       const nftContract = new web3Instance.eth.Contract(
-        SATOSHI_SHROOM_ABI.newestOne,
-        NEWEST_CONTRACT,
+        ABI.ORIG_SHROOM_ABI,
+        ORIG_CONTRACT_ADDRESS,
         { gasLimit: "1000000" }
       );
 

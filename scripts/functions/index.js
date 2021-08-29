@@ -1,3 +1,3 @@
-const runFunction = require("./runFunction").default;
+const run = require("./run").default;
 
-exports.runFunction = runFunction;
+exports.run = run;
