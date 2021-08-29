@@ -40,7 +40,7 @@ contract SatoshiShroom is ERC721Tradable {
     }
 
     // Once all Shrooms were bought, set the baseURI to IPFS to populate metadata / display images
-    function setBaseURI(string memory baseURI) public onlyOwner {
+    function setBaseURI(string memory baseURI) public payable onlyOwner {
         _setBaseURI(baseURI); // bbco
     }
 

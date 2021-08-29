@@ -6,11 +6,10 @@ const functions = require("./functions");
 const MNEMONIC = process.env.MNEMONIC;
 const NODE_API_KEY = process.env.INFURA_KEY || process.env.ALCHEMY_KEY;
 const isInfura = !!process.env.INFURA_KEY;
-const NEW_CONTRACT = process.env.NEW_CONTRACT;
-// const SHROOM_CONTRACT_ADDRESS = process.env.SHROOM_CONTRACT_ADDRESS;
+const NEWEST_CONTRACT = process.env.NEWEST_CONTRACT;
 const OWNER_ADDRESS = process.env.OWNER_ADDRESS;
 const NETWORK = process.env.NETWORK;
-const NUM_MUSHROOMS = 1;
+const NUM_MUSHROOMS = 3;
 
 if (!MNEMONIC || !NODE_API_KEY || !OWNER_ADDRESS || !NETWORK) {
   console.error(
@@ -18,23 +17,6 @@ if (!MNEMONIC || !NODE_API_KEY || !OWNER_ADDRESS || !NETWORK) {
   );
   return;
 }
-
-const NFT_ABI = [
-  {
-    constant: false,
-    inputs: [
-      {
-        name: "_to",
-        type: "address",
-      },
-    ],
-    name: "mintTo",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-];
 
 async function main() {
   try {
@@ -48,10 +30,10 @@ async function main() {
     );
     const web3Instance = new web3(provider);
 
-    if (NEW_CONTRACT) {
+    if (NEWEST_CONTRACT) {
       const nftContract = new web3Instance.eth.Contract(
-        SATOSHI_SHROOM_ABI.newOne,
-        NEW_CONTRACT,
+        SATOSHI_SHROOM_ABI.newestOne,
+        NEWEST_CONTRACT,
         { gasLimit: "1000000" }
       );
 
@@ -59,59 +41,48 @@ async function main() {
       // const methods = await nftContract.methods;
       // console.log("NFT METHODS", methods);
 
-      const mushroomPrice = await functions.runFunction(
-        "mushroomPrice",
-        nftContract,
-        { estimateGas: false }
-      );
+      // // MUSHROOM PRICE
+      // const mushroomPrice = await functions.runFunction(
+      //   "mushroomPrice",
+      //   nftContract,
+      //   { estimateGas: false }
+      // );
 
+      // // MAX # TO PURCHASE
       // const maxMushroomPurchase = await functions.runFunction(
       //   "maxMushroomPurchase",
       //   nftContract,
       //   { estimateGas: false }
       // );
 
-      // PRINT BASE URI
+      // // PRINT BASE URI
       // await functions.runFunction("getBaseURI", nftContract, {
       //   estimateGas: false,
       // });
 
-      // UPDATE BASE URI
-      // await functions.runFunction("owner", nftContract)
-
-      // // MINT NFT
-      // // const mintFunctionRef = await functions.runFunction(
-      // //   "mintSatoshiShroom",
-      // //   nftContract,
-      // //   { callFunction: false },
-      // //   1
-      // // );
-      // // const mintFn = mintFunctionRef(1);
-      // // const result = await mintFn(1).send({
-      // const result = await nftContract.methods.mintSatoshiShroom(1).send({
+      // // UPDATE BASE URI
+      // const gas = await nftContract.methods
+      //   .setBaseURI("")
+      //   .estimateGas({ from: OWNER_ADDRESS });
+      // await nftContract.methods.setBaseURI("").send({
       //   from: OWNER_ADDRESS,
-      //   value: mushroomPrice,
+      //   value: gas,
       // });
-      // console.log(`MINT TX / RESULT: ${result.transactionHash} / `, result);
 
-      // // Mushrooms issued directly to the owner.
-      // for (var i = 0; i < NUM_MUSHROOMS; i++) {
-      const result = await nftContract.methods
-        .mintSatoshiShroom(1)
-        // .call(1)
-        .send({
-          from: OWNER_ADDRESS,
-          value: mushroomPrice,
-        })
-        .on("transactionHash", function (hash) {
-          console.log("transactionHash", hash);
-        });
-      console.log("Minted creature. Transaction: " + result.transactionHash);
-      // }
+      // // MINT MUSHROOMS
+      // await nftContract.methods
+      //   .mintSatoshiShroom(NUM_MUSHROOMS)
+      //   .send({
+      //     from: OWNER_ADDRESS,
+      //     value: mushroomPrice * NUM_MUSHROOMS,
+      //   })
+      //   .on("transactionHash", function (hash) {
+      //     console.log("transactionHash", hash);
+      //   });
 
       console.log("Minting complete.");
     } else {
-      console.error("Add NFT_CONTRACT_ADDRESS to the environment variables");
+      console.error("Add correct / missing environment variables");
     }
   } catch (err) {
     console.log("ERROR", err);
