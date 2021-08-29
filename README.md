@@ -32,3 +32,8 @@ From a terminal session with these env variable loaded, run:
 #### Extra Contract Functions
 
 There are a number of extra contract functions available in this contract. To run them, there is a helper function in `util` and a few already commented out and labeled in the `mint.js` script.
+
+#### Notes
+
+- When deploying the same contract to a new Alchemy app, delete the `build` directory.
+- After making changes to the smart contract (during testing, for example), you **must** change the ABI passed to the `web3.Contract`. The ABI can be found in the `build` directory of the edited contract.
