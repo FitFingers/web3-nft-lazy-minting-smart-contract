@@ -36,13 +36,16 @@ contract SatoshiShroom is ERC721Tradable {
     // Withdraw all contract funds to the contract-owner's wallet only
     function withdraw() public onlyOwner {
         uint256 balance = address(this).balance;
-        msg.sender.transfer(balance);
+        payable(msg.sender).transfer(balance);
     }
 
-    // Once all Shrooms were bought, set the baseURI to IPFS to populate metadata / display images
-    function setBaseURI(string memory baseURI) public onlyOwner {
-        _setBaseURI(baseURI); // from ERC721
-    }
+    // // Once all Shrooms were bought, set the baseURI to IPFS to populate metadata / display images
+    // function setBaseURI(string memory baseURI) public onlyOwner {
+    //     // _baseURI(baseURI); // from ERC721
+    //     _baseURI = baseURI;
+    //     // _baseURI("test");
+    //     // => (baseURI); // from ERC721
+    // }
 
     function mintSatoshiShroom(uint256 tokensToMint) public payable {
         require(
@@ -64,5 +67,13 @@ contract SatoshiShroom is ERC721Tradable {
                 _safeMint(msg.sender, mintIndex);
             }
         }
+    }
+
+    function baseTokenURI() public pure override returns (string memory) {
+        return "https://creatures-api.opensea.io/api/creature/";
+    }
+
+    function contractURI() public pure returns (string memory) {
+        return "https://creatures-api.opensea.io/contract/opensea-creatures";
     }
 }
