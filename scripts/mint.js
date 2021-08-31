@@ -1,12 +1,12 @@
-const initialiseWeb3 = require("./init-web3");
+const { initialiseWeb3 } = require("./init-web3");
 const functions = require("./functions");
-
-const { contract } = initialiseWeb3();
 
 const OWNER_ADDRESS = process.env.OWNER_ADDRESS;
 
 async function mint() {
   try {
+    const { contract } = await initialiseWeb3();
+
     const NUM_MUSHROOMS = process.argv[2];
 
     // TOTAL CIRCULATING SUPPLY

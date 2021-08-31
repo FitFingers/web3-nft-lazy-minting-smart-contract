@@ -1,9 +1,9 @@
-const initialiseWeb3 = require("./init-web3");
-
-const { contract } = initialiseWeb3();
+const { initialiseWeb3 } = require("./init-web3");
 
 async function setBaseURI() {
   try {
+    const { contract } = await initialiseWeb3();
+
     const newBaseURI = process.argv[2];
 
     // UPDATE BASE URI
