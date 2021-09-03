@@ -24,7 +24,7 @@ contract ProxyRegistry {
 abstract contract ERC721Tradable is ContextMixin, ERC721Enumerable, NativeMetaTransaction, Ownable {
     using SafeMath for uint256;
     
-    string private baseURI = "";
+    string private baseURI = "https://satoshishrooms.club/api/mushroom-metadata/";
     address proxyRegistryAddress;
     uint256 private _currentTokenId = 0;
 
